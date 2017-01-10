@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var conn = require('../../database/connectionString');
+var conn = require('../../database/sql/connectionString');
 
 router.use(function timeLog(req, res, next) {
     console.log('Time: ', Date.now());

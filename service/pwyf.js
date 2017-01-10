@@ -1,6 +1,6 @@
-var conn = require('../database/connectionString');
-var jsonSql = require('../database/jsonSql');
-var userSql = require('../database/userSql');
+var conn = require('../database/sql/connectionString');
+var jsonSql = require('../database/sql/jsonSql');
+var userSql = require('../database/sql/userSql');
 
 exports.updateUserJson = function (row, type, response) {
     console.log("db insert string. row: " + row + " response: " + response);

@@ -1,6 +1,6 @@
-var conn = require('../database/connectionString');
-var jsonSql = require('../database/jsonSql');
-var userSql = require('../database/userSql');
+var conn = require('../database/sql/connectionString');
+var jsonSql = require('../database/sql/jsonSql');
+var userSql = require('../database/sql/userSql');
 var rp = require('request-promise')
 
 // 사용자 능력치 조회하는 url

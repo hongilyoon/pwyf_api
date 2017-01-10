@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var conn = require('../../database/connectionString');
-var jsonSql = require('../../database/jsonSql');
+var conn = require('../../database/sql/connectionString');
+var jsonSql = require('../../database/sql/jsonSql');
 
 router.use(function timeLog(req, res, next) {
     console.log('Time: ', Date.now());
