@@ -20,11 +20,12 @@ router.get('/list', function (req, res) {
             // 에러 발생시
             if (err) {
                 throw err;
+                connection.release();
             }
-
 
             console.log('user list: ', rows);
             res.send(rows);
+            connection.release();
         });
     });
 });

@@ -20,11 +20,13 @@ router.get('/specific/:id/:type', function (req, res) {
 
                 // 에러 발생시
                 if (err) {
+                    connection.release();
                     throw err;
                 }
 
                 console.log('specific: ', rows);
                 res.send(rows);
+                connection.release();
             });
     });
 });
@@ -42,10 +44,12 @@ router.get('/specific/friends/:id/:type', function (req, res) {
             // 에러 발생시
             if (err) {
                 throw err;
+                connection.release();
             }
 
             console.log('specific: ', rows);
             res.send(rows);
+            connection.release();
         });
     });
 });
@@ -67,6 +71,7 @@ router.get('/specific/friends/:id/:type/:page/:size', function (req, res) {
             // 에러 발생시
             if (err) {
                 throw err;
+                connection.release();
             }
 
             totalCnt = rows[0].cnt;
@@ -83,14 +88,17 @@ router.get('/specific/friends/:id/:type/:page/:size', function (req, res) {
                     // 에러 발생시
                     if (err) {
                         throw err;
+                        connection.release();
                     }
 
                     console.log('specific: ', rows);
                     result.users = rows;
                     res.send(result);
+                    connection.release();
                 });
             } else {
                 res.send(result);
+                connection.release();
             }
         });
     });

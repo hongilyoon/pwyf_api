@@ -85,3 +85,7 @@ exports.getFriendsAttributesList = "SELECT " +
 	"                id = ?)) A " +
 	"ORDER BY type " +
 	"LIMIT ? , ?";
+
+exports.deleteUserJson = "DELETE FROM json WHERE user_seq = ?";
+
+exports.insertUserJson = "INSERT INTO json(`user_seq`, `type`, `subtype`, `hero_name`, `json`, `mod_date`)VALUES(?, ?, ?, ?, ?, NOW());";

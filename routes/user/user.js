@@ -19,10 +19,12 @@ router.get('/:id', function (req, res) {
             // 에러 발생시
             if (err) {
                 throw err;
+                connection.release();
             }
 
             console.log('user list: ', rows);
             res.send(rows);
+            connection.release();
         });
     });
 });
@@ -35,10 +37,12 @@ router.get('/list', function (req, res) {
             // 에러 발생시
             if (err) {
                 throw err;
+                connection.release();
             }
 
             console.log('user list: ', rows);
             res.send(rows);
+            connection.release();
         });
     });
 });
@@ -57,6 +61,7 @@ router.post("/save", function (req, res) {
             // 에러 발생시
             if (err) {
                 throw err;
+                connection.release();
             }
 
             // 기존 사용자가 존재하는 경우 Update, 존재하지 않는 경우 Insert
@@ -69,10 +74,12 @@ router.post("/save", function (req, res) {
                     // 에러 발생시
                     if (err) {
                         throw err;
+                        connection.release();
                     }
 
                     updateJson(req.body);
                     res.sendStatus(200);
+                    connection.release();
                 });
             } else {
                 connection.query(userSql.insertUserInfo, [name, id,
@@ -82,10 +89,12 @@ router.post("/save", function (req, res) {
                     // 에러 발생시
                     if (err) {
                         throw err;
+                        connection.release();
                     }
 
                     updateJson(req.body);
                     res.sendStatus(200);
+                    connection.release();
                 });
             }
         });

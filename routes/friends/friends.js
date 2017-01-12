@@ -24,10 +24,12 @@ router.post("/save", function (req, res) {
                     // 에러 발생시
                     if (err) {
                         callback(err);
+                        connection.release();
                     }
 
                     // 정상 조회
                     callback(null, rows);
+                    connection.release();
                 });
             });
         },
@@ -56,10 +58,12 @@ router.post("/save", function (req, res) {
                         // 에러 발생시
                         if (err) {
                             callback(err);
+                            connection.release();
                         }
 
                         // 정상 조회
                         callback(null);
+                        connection.release();
                     });
                 });
             } else {
