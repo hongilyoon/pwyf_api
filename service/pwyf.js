@@ -1,9 +1,69 @@
 var conn = require('../database/sql/connectionString');
 var jsonSql = require('../database/sql/jsonSql');
 var userSql = require('../database/sql/userSql');
+var lootbox = require('../service/lootbox');
+var arrMode = ["competitive", "quickplay"];
+var pwyf = require('../service/pwyf');
+
+exports.saveUserJson = function(row) {
+    console.log("db save user josn string. row: " + row.seq);
+
+    // type 0번 json save
+    lootbox.getUsersStats(row).then(function (response) {
+        console.log("scheduler getUsersStats: " + response);
+        if (response != undefined && (JSON.parse(response).statusCode == undefined || JSON.parse(response).statusCode == 200)) {
+            pwyf.deleteUserJsonWithParame(row, "0", "", "");
+            pwyf.insertUserJson(row, "0", "", response, "");
+        }
+    });
+
+    // type 1번 json save
+    lootbox.getUsersAchievements(row).then(function (response) {
+        console.log("scheduler getUsersAchievements: " + response);
+        if (response != undefined && (JSON.parse(response).statusCode == undefined || JSON.parse(response).statusCode == 200)) {
+            pwyf.deleteUserJsonWithParame(row, "1", "", "");
+            pwyf.insertUserJson(row, "1", "", response, "");
+        }
+    });
+
+    // type 2번 json save
+    for (var i = 0, cnt = arrMode.length; i < cnt; i++) {
+        lootbox.getUsersStatsForAllHeroes(row, arrMode[i]).then(function (response) {
+            console.log("scheduler getUsersStatsForAllHeroes: " + response);
+            if (response[1] != undefined && (JSON.parse(response[1]).statusCode == undefined || JSON.parse(response[1]).statusCode == 200)) {
+                pwyf.deleteUserJsonWithParame(row, "2", response[0], "");
+                pwyf.insertUserJson(row, "2", response[0], response[1], "");
+            }
+        });
+    }
+
+    // type 3번 json save
+    for (var i = 0, cnt = arrMode.length; i < cnt; i++) {
+        lootbox.getOverallHeroStats(row, arrMode[i]).then(function (response) {
+            console.log("scheduler getOverallHeroStats: " + response);
+            if (response[1] != undefined && (JSON.parse(response[1]).statusCode == undefined || JSON.parse(response[1]).statusCode == 200)) {
+                pwyf.deleteUserJsonWithParame(row, "3", response[0], "");
+                pwyf.insertUserJson(row, "3", response[0], response[1], "");
+                var overalHeroStats = JSON.parse(response[1]);
+                overalHeroStats.forEach(function (hero) {
+
+                    console.log("scheduler getUsersStatsForMultipleHeroes: hero.name" + hero.name);
+                    lootbox.getUsersStatsForMultipleHeroes(row, response[0], hero.name).then(function (arrResponse) {
+                        console.log("scheduler getUsersStatsForMultipleHeroes: arrResponse" + arrResponse);
+
+                        if (arrResponse[2] != undefined && (JSON.parse(arrResponse[2]).statusCode == undefined || JSON.parse(arrResponse[2]).statusCode == 200)) {
+                            pwyf.deleteUserJsonWithParame(arrResponse[0], "4", response[1], arrResponse[3]);
+                            pwyf.insertUserJson(arrResponse[0], "4", arrResponse[1], arrResponse[2], arrResponse[3]);
+                        }
+                    });
+                });
+            }
+        });
+    }
+};
 
 exports.deleteUserJson =  function (row) {
-    console.log("db delete user josn string. row: " + row.jsonSeq);
+    console.log("db delete user josn string. row: " + row.seq);
 
     conn.getConnection(function (err, connection) {
         connection.query(jsonSql.deleteUserJson, [row.seq], function (err, rows) {
@@ -17,7 +77,47 @@ exports.deleteUserJson =  function (row) {
             connection.release();
         });
     });
-}
+};
+
+exports.deleteUserJsonWithParame =  function (row, type, subtype, heroname) {
+    console.log("db deleteUserJsonWithParame string. row: " + row.jsonSeq + " type: " + type);
+
+    conn.getConnection(function (err, connection) {
+
+        var arrParams = [row.seq, type];
+        var sql = jsonSql.deleteUserJsonWithType;
+        if (subtype != "" && heroname != "") {
+            sql = jsonSql.deleteUserJsonWithTypeAndSubTypeAndHeroname;
+            arrParams = [row.seq, type, subtype, heroname];
+        }
+        else if (subtype != "") {
+            sql = jsonSql.deleteUserJsonWithTypeAndSubType;
+            arrParams = [row.seq, type, subtype];
+        }
+        console.log("############deleteUserJsonWithParame. sql: " + sql + " arrParams: " + arrParams);
+        if (sql == undefined || sql == "") {
+            console.log("############deleteUserJsonWithParame. sql undefined ");
+        }
+
+        try {
+            connection.query(sql, arrParams, function (err, rows) {
+                // 에러 발생시
+                if (err) {
+                    console.log("deleteUserJsonWithParame error: " + err.toString());
+                    console.log("deleteUserJsonWithParame error. sql: " + sql + " arrParams: " + arrParams);
+                    connection.release();
+                    throw err;
+                }
+                console.log("deleteUserJsonWithParame success");
+                connection.release();
+            });
+        }
+        catch (Exception) {
+            console.log("deleteUserJsonWithParame success");
+        }
+
+    });
+};
 
 exports.insertUserJson = function (row, type, subtype, response, heroname) {
     console.log("db insert string. \nrow: " + row.seq + " \ntype: " + type + " \nsubtype: " + subtype + " \nresponse: " + response + " \nheroname: " + heroname);
@@ -34,7 +134,7 @@ exports.insertUserJson = function (row, type, subtype, response, heroname) {
             connection.release();
         });
     });
-}
+};
 
 exports.updateUserJson = function (row, type, response) {
     console.log("db insert string. row: " + row.seq + " response: " + response);
@@ -52,7 +152,7 @@ exports.updateUserJson = function (row, type, response) {
             connection.release();
         });
     });
-}
+};
 
 exports.updateUserJsonWithRegionAndPlatform = function (row, type, response) {
     console.log("db insert string. row: " + row + " response: " + response);
@@ -84,7 +184,7 @@ exports.getRegionInfo = function (seq, callback) {
             callback(null, rows[0]);
         });
     });
-}
+};
 
 exports.getPlatformInfo = function (seq, callback) {
 
@@ -100,4 +200,6 @@ exports.getPlatformInfo = function (seq, callback) {
             callback(null, rows[0]);
         });
     });
-}
+};
+
+

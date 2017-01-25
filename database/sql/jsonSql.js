@@ -88,4 +88,10 @@ exports.getFriendsAttributesList = "SELECT " +
 
 exports.deleteUserJson = "DELETE FROM json WHERE user_seq = ?";
 
-exports.insertUserJson = "INSERT INTO json(`user_seq`, `type`, `subtype`, `hero_name`, `json`, `mod_date`)VALUES(?, ?, ?, ?, ?, NOW());";
+exports.deleteUserJsonWithType = "DELETE FROM json WHERE user_seq = ? and type = ?";
+
+exports.deleteUserJsonWithTypeAndSubType = "DELETE FROM json WHERE user_seq = ? and type = ? and subtype = ?";
+
+exports.deleteUserJsonWithTypeAndSubTypeAndHeroname = "DELETE FROM json WHERE user_seq = ? and type = ? and subtype = ? and hero_name = ?";
+
+exports.insertUserJson = "INSERT INTO json(`user_seq`, `type`, `subtype`, `hero_name`, `json`, `mod_date`) VALUES (?, ?, ?, ?, ?, NOW());";
