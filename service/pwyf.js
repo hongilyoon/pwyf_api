@@ -5,7 +5,7 @@ var lootbox = require('../service/lootbox');
 var arrMode = ["competitive", "quickplay"];
 var pwyf = require('../service/pwyf');
 
-exports.saveUserJson = function(row) {
+exports.saveUserJson = function (row) {
     console.log("db save user josn string. row: " + row.seq);
 
     // type 0번 json save
@@ -62,7 +62,7 @@ exports.saveUserJson = function(row) {
     }
 };
 
-exports.deleteUserJson =  function (row) {
+exports.deleteUserJson = function (row) {
     console.log("db delete user josn string. row: " + row.seq);
 
     conn.getConnection(function (err, connection) {
@@ -79,7 +79,7 @@ exports.deleteUserJson =  function (row) {
     });
 };
 
-exports.deleteUserJsonWithParame =  function (row, type, subtype, heroname) {
+exports.deleteUserJsonWithParame = function (row, type, subtype, heroname) {
     console.log("db deleteUserJsonWithParame string. row: " + row.jsonSeq + " type: " + type);
 
     conn.getConnection(function (err, connection) {
@@ -138,7 +138,7 @@ exports.insertUserJson = function (row, type, subtype, response, heroname) {
 
 exports.updateUserJson = function (row, type, response) {
     console.log("db insert string. row: " + row.seq + " response: " + response);
-    console.log("UPDATE json SET json = " + response + ", mod_date = NOW() WHERE seq = " + row.seq+ " AND type = " + 2);
+    console.log("UPDATE json SET json = " + response + ", mod_date = NOW() WHERE seq = " + row.seq + " AND type = " + 2);
     // 대상 명단 조회(PWYF)
     conn.getConnection(function (err, connection) {
         connection.query("UPDATE json SET json = ?, mod_date = NOW() WHERE seq = ? AND type = ?", [response, row.seq, type], function (err, rows) {

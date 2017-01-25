@@ -13,7 +13,7 @@ var usersAchievementsUrl = "https://api.lootbox.eu/{platform}/{region}/{tag}/ach
 var usersStatsForAllHeroesUrl = "https://api.lootbox.eu/{platform}/{region}/{tag}/{mode}/allHeroes/";
 
 // Type: 3, Overall Hero Stat 조회하는 url
-var overallHeroStatsUrl =  "https://api.lootbox.eu/{platform}/{region}/{tag}/{mode}/heroes";
+var overallHeroStatsUrl = "https://api.lootbox.eu/{platform}/{region}/{tag}/{mode}/heroes";
 
 // Type: 4, Multiple Heroes Stats 조회하는 url
 var usersStatsForMultipleHeroesUrl = "https://api.lootbox.eu/{platform}/{region}/{tag}/{mode}/hero/{heroes}/";

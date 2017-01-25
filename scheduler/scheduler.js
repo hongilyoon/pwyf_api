@@ -80,17 +80,10 @@ cron.schedule('0 3 * * * *', function () {
                 // }
 
 
-
-
-
-
-
-
             });
         });
     });
 }).start();
-
 
 
 cron.schedule('30 0 * * * *', function () {
