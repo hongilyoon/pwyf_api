@@ -12,7 +12,9 @@
     "express": "4.14.0",
     "mysql": "*",
     "node-cron": "^1.1.2",
+    "node-gyp": "^3.5.0",
     "request": "^2.78.0",
-    "request-promise": "^4.1.1"
+    "request-promise": "^4.1.1",
+    "thread-sleep": "^2.0.0"
   }
 }

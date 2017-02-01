@@ -45,8 +45,9 @@ exports.saveUserJson = function (row) {
                 pwyf.deleteUserJsonWithParams(row, "3", response[0], "");
                 pwyf.insertUserJson(row, "3", response[0], response[1], "");
                 var overalHeroStats = JSON.parse(response[1]);
-                overalHeroStats.forEach(function (hero) {
 
+                // type 4번 json save
+                overalHeroStats.forEach(function (hero) {
                     console.log("scheduler getUsersStatsForMultipleHeroes: hero.name" + hero.name);
                     lootbox.getUsersStatsForMultipleHeroes(row, response[0], hero.name).then(function (arrResponse) {
                         console.log("scheduler getUsersStatsForMultipleHeroes: arrResponse" + arrResponse);
@@ -80,7 +81,7 @@ exports.deleteUserJson = function (row) {
 };
 
 exports.deleteUserJsonWithParams = function (row, type, subtype, heroname) {
-    console.log("db deleteUserJsonWithParame string. row: " + row.seq + " type: " + type);
+    console.log("db deleteUserJsonWithParams string. row: " + row.seq + " type: " + type + " subtype: " + subtype + " heroname: " + heroname);
 
     conn.getConnection(function (err, connection) {
 
@@ -90,30 +91,31 @@ exports.deleteUserJsonWithParams = function (row, type, subtype, heroname) {
             sql = jsonSql.deleteUserJsonWithTypeAndSubTypeAndHeroname;
             arrParams = [row.seq, type, subtype, heroname];
         }
-        else if (subtype != "") {
+        else {
             sql = jsonSql.deleteUserJsonWithTypeAndSubType;
             arrParams = [row.seq, type, subtype];
         }
-        console.log("############deleteUserJsonWithParame. sql: " + sql + " arrParams: " + arrParams);
+
+        console.log("deleteUserJsonWithParams. sql: " + sql + " arrParams: " + arrParams);
         if (sql == undefined || sql == "") {
-            console.log("############deleteUserJsonWithParame. sql undefined ");
+            console.log("deleteUserJsonWithParams. sql undefined ");
         }
 
         try {
             connection.query(sql, arrParams, function (err, rows) {
                 // 에러 발생시
                 if (err) {
-                    console.log("deleteUserJsonWithParame error: " + err.toString());
-                    console.log("deleteUserJsonWithParame error. sql: " + sql + " arrParams: " + arrParams);
+                    console.log("deleteUserJsonWithParams error: " + err.toString());
+                    console.log("deleteUserJsonWithParams error. sql: " + sql + " arrParams: " + arrParams);
                     connection.release();
                     throw err;
                 }
-                console.log("deleteUserJsonWithParame success");
+                console.log("deleteUserJsonWithParams success");
                 connection.release();
             });
         }
         catch (Exception) {
-            console.log("deleteUserJsonWithParame Exception: " + Exception);
+            console.log("deleteUserJsonWithParams Exception: " + Exception);
         }
 
     });
@@ -125,14 +127,16 @@ exports.insertUserJson = function (row, type, subtype, response, heroname) {
     // 대상 명단 조회(PWYF)
     try {
         conn.getConnection(function (err, connection) {
-            connection.query(jsonSql.insertUserJson, [row.seq, type, subtype, heroname, response], function (err) {
+            var sql = jsonSql.insertUserJson;
+            console.log("insertUserJson. sql: " + sql);
+            connection.query(sql, [row.seq, type, subtype, heroname, response], function (err) {
                 // 에러 발생시
                 if (err) {
                     console.log("insertUserJson error: " + err.toString());
                     connection.release();
                     throw err;
                 }
-                console.log("insert success");
+                console.log("insertUserJson success");
                 connection.release();
             });
         });

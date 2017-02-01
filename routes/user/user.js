@@ -101,7 +101,6 @@ router.post("/save", function (req, res) {
                         connection.release();
                     }
 
-                    // updateJson(req.body);
                     res.sendStatus(200);
                     connection.query(userSql.getUpdateUser, [id], function (err, row) {
 
@@ -119,64 +118,5 @@ router.post("/save", function (req, res) {
         });
     });
 });
-
-// updateJson = function (param) {
-//
-//     async.waterfall([
-//         function (callback) {
-//             pwyf.getPlatformInfo(param.platformSeq, function (err, data) {
-//                 // 에러 발생시
-//                 if (err) {
-//                     callback(err);
-//                 }
-//
-//                 // 정상 조회
-//                 callback(null, data.name);
-//             })
-//         },
-//         function (platformName, callback) {
-//             pwyf.getRegionInfo(param.regionSeq, function (err, data) {
-//                 // 에러 발생시
-//                 if (err) {
-//                     callback(err);
-//                 }
-//
-//                 // 정상 조회
-//                 callback(null, platformName, data.name);
-//             })
-//         },
-//         function (platformName, regionName, callback) {
-//
-//             // log
-//             console.log("platformName: " + platformName);
-//             console.log("regionName: " + regionName);
-//
-//             // set param
-//             param.platformName = platformName;
-//             param.regionName = regionName;
-//             console.log("param tag: " + param.tag);
-//
-//             // 능력치 저장
-//             lootbox.getUsersStats(param).then(function (response) {
-//                 console.log("scheduler getUsersStats: " + response);
-//                 pwyf.updateUserJson(param, "1", response);
-//             });
-//
-//             // 성과 저장
-//             lootbox.getUsersAchievements(param).then(function (response) {
-//                 console.log("scheduler getUsersAchievements: " + response);
-//                 pwyf.updateUserJson(param, "0", response);
-//             });
-//
-//             callback(null);
-//         }
-//     ], function (err) {
-//         if (err) {
-//             console.log("err: " + err);
-//         } else {
-//             console.log("success");
-//         }
-//     });
-// }
 
 module.exports = router;

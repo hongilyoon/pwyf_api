@@ -6,7 +6,7 @@ var lootbox = require('../service/lootbox');
 var pwyf = require('../service/pwyf');
 var cron = require('node-cron');
 
-cron.schedule('0 * * * * *', function () {
+cron.schedule('0 */2 * * * *', function () {
     console.log('info', 'running a task of updating user stats every time. ' + new Date());
 
     // 1일 동안 업데이트 안된 대상 명단 조회
@@ -30,7 +30,6 @@ cron.schedule('0 * * * * *', function () {
         });
     });
 }).start();
-
 
 cron.schedule('30 0 * * * *', function () {
     console.log('info', 'running a task of updating hello friends list every time. ' + new Date());
