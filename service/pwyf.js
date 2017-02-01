@@ -12,7 +12,7 @@ exports.saveUserJson = function (row) {
     lootbox.getUsersStats(row).then(function (response) {
         console.log("scheduler getUsersStats: " + response);
         if (response != undefined && (JSON.parse(response).statusCode == undefined || JSON.parse(response).statusCode == 200)) {
-            pwyf.deleteUserJsonWithParame(row, "0", "", "");
+            pwyf.deleteUserJsonWithParams(row, "0", "", "");
             pwyf.insertUserJson(row, "0", "", response, "");
         }
     });
@@ -21,7 +21,7 @@ exports.saveUserJson = function (row) {
     lootbox.getUsersAchievements(row).then(function (response) {
         console.log("scheduler getUsersAchievements: " + response);
         if (response != undefined && (JSON.parse(response).statusCode == undefined || JSON.parse(response).statusCode == 200)) {
-            pwyf.deleteUserJsonWithParame(row, "1", "", "");
+            pwyf.deleteUserJsonWithParams(row, "1", "", "");
             pwyf.insertUserJson(row, "1", "", response, "");
         }
     });
@@ -30,8 +30,8 @@ exports.saveUserJson = function (row) {
     for (var i = 0, cnt = arrMode.length; i < cnt; i++) {
         lootbox.getUsersStatsForAllHeroes(row, arrMode[i]).then(function (response) {
             console.log("scheduler getUsersStatsForAllHeroes: " + response);
-            if (response[1] != undefined && (JSON.parse(response[1]).statusCode == undefined || JSON.parse(response[1]).statusCode == 200)) {
-                pwyf.deleteUserJsonWithParame(row, "2", response[0], "");
+            if (response != undefined  && response[1] != undefined && (JSON.parse(response[1]).statusCode == undefined || JSON.parse(response[1]).statusCode == 200)) {
+                pwyf.deleteUserJsonWithParams(row, "2", response[0], "");
                 pwyf.insertUserJson(row, "2", response[0], response[1], "");
             }
         });
@@ -41,8 +41,8 @@ exports.saveUserJson = function (row) {
     for (var i = 0, cnt = arrMode.length; i < cnt; i++) {
         lootbox.getOverallHeroStats(row, arrMode[i]).then(function (response) {
             console.log("scheduler getOverallHeroStats: " + response);
-            if (response[1] != undefined && (JSON.parse(response[1]).statusCode == undefined || JSON.parse(response[1]).statusCode == 200)) {
-                pwyf.deleteUserJsonWithParame(row, "3", response[0], "");
+            if (response != undefined && response[1] != undefined && (JSON.parse(response[1]).statusCode == undefined || JSON.parse(response[1]).statusCode == 200)) {
+                pwyf.deleteUserJsonWithParams(row, "3", response[0], "");
                 pwyf.insertUserJson(row, "3", response[0], response[1], "");
                 var overalHeroStats = JSON.parse(response[1]);
                 overalHeroStats.forEach(function (hero) {
@@ -51,8 +51,8 @@ exports.saveUserJson = function (row) {
                     lootbox.getUsersStatsForMultipleHeroes(row, response[0], hero.name).then(function (arrResponse) {
                         console.log("scheduler getUsersStatsForMultipleHeroes: arrResponse" + arrResponse);
 
-                        if (arrResponse[2] != undefined && (JSON.parse(arrResponse[2]).statusCode == undefined || JSON.parse(arrResponse[2]).statusCode == 200)) {
-                            pwyf.deleteUserJsonWithParame(arrResponse[0], "4", response[1], arrResponse[3]);
+                        if (arrResponse != undefined && arrResponse[2] != undefined && (JSON.parse(arrResponse[2]).statusCode == undefined || JSON.parse(arrResponse[2]).statusCode == 200)) {
+                            pwyf.deleteUserJsonWithParams(arrResponse[0], "4", arrResponse[1], arrResponse[3]);
                             pwyf.insertUserJson(arrResponse[0], "4", arrResponse[1], arrResponse[2], arrResponse[3]);
                         }
                     });
@@ -79,8 +79,8 @@ exports.deleteUserJson = function (row) {
     });
 };
 
-exports.deleteUserJsonWithParame = function (row, type, subtype, heroname) {
-    console.log("db deleteUserJsonWithParame string. row: " + row.jsonSeq + " type: " + type);
+exports.deleteUserJsonWithParams = function (row, type, subtype, heroname) {
+    console.log("db deleteUserJsonWithParame string. row: " + row.seq + " type: " + type);
 
     conn.getConnection(function (err, connection) {
 
@@ -113,7 +113,7 @@ exports.deleteUserJsonWithParame = function (row, type, subtype, heroname) {
             });
         }
         catch (Exception) {
-            console.log("deleteUserJsonWithParame success");
+            console.log("deleteUserJsonWithParame Exception: " + Exception);
         }
 
     });
@@ -121,19 +121,25 @@ exports.deleteUserJsonWithParame = function (row, type, subtype, heroname) {
 
 exports.insertUserJson = function (row, type, subtype, response, heroname) {
     console.log("db insert string. \nrow: " + row.seq + " \ntype: " + type + " \nsubtype: " + subtype + " \nresponse: " + response + " \nheroname: " + heroname);
+
     // 대상 명단 조회(PWYF)
-    conn.getConnection(function (err, connection) {
-        connection.query(jsonSql.insertUserJson, [row.seq, type, subtype, heroname, response], function (err, rows) {
-            // 에러 발생시
-            if (err) {
-                console.log("insertUserJson error: " + err.toString());
+    try {
+        conn.getConnection(function (err, connection) {
+            connection.query(jsonSql.insertUserJson, [row.seq, type, subtype, heroname, response], function (err) {
+                // 에러 발생시
+                if (err) {
+                    console.log("insertUserJson error: " + err.toString());
+                    connection.release();
+                    throw err;
+                }
+                console.log("insert success");
                 connection.release();
-                throw err;
-            }
-            console.log("insert success");
-            connection.release();
+            });
         });
-    });
+    }
+    catch (Exception) {
+        console.log("insertUserJson Exception: " + Exception);
+    }
 };
 
 exports.updateUserJson = function (row, type, response) {
