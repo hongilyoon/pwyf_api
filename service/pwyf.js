@@ -11,7 +11,7 @@ exports.saveUserJson = function (row) {
     // type 0번 json save
     lootbox.getUsersStats(row).then(function (response) {
         console.log("scheduler getUsersStats: " + response);
-        if (response != undefined && (JSON.parse(response).statusCode == undefined || JSON.parse(response).statusCode == 200)) {
+        if (response != undefined && (JSON.parse(response).statusCode == undefined || JSON.parse(response).statusCode == 200) && response.length > 100) {
             pwyf.deleteUserJsonWithParams(row, "0", "", "");
             pwyf.insertUserJson(row, "0", "", response, "");
         }
@@ -20,7 +20,7 @@ exports.saveUserJson = function (row) {
     // type 1번 json save
     lootbox.getUsersAchievements(row).then(function (response) {
         console.log("scheduler getUsersAchievements: " + response);
-        if (response != undefined && (JSON.parse(response).statusCode == undefined || JSON.parse(response).statusCode == 200)) {
+        if (response != undefined && (JSON.parse(response).statusCode == undefined || JSON.parse(response).statusCode == 200) && response.length > 100) {
             pwyf.deleteUserJsonWithParams(row, "1", "", "");
             pwyf.insertUserJson(row, "1", "", response, "");
         }
@@ -30,7 +30,7 @@ exports.saveUserJson = function (row) {
     for (var i = 0, cnt = arrMode.length; i < cnt; i++) {
         lootbox.getUsersStatsForAllHeroes(row, arrMode[i]).then(function (response) {
             console.log("scheduler getUsersStatsForAllHeroes: " + response);
-            if (response != undefined  && response[1] != undefined && (JSON.parse(response[1]).statusCode == undefined || JSON.parse(response[1]).statusCode == 200)) {
+            if (response != undefined && response[1] != undefined && (JSON.parse(response[1]).statusCode == undefined || JSON.parse(response[1]).statusCode == 200) && response[1].length > 100) {
                 pwyf.deleteUserJsonWithParams(row, "2", response[0], "");
                 pwyf.insertUserJson(row, "2", response[0], response[1], "");
             }
@@ -41,7 +41,7 @@ exports.saveUserJson = function (row) {
     for (var i = 0, cnt = arrMode.length; i < cnt; i++) {
         lootbox.getOverallHeroStats(row, arrMode[i]).then(function (response) {
             console.log("scheduler getOverallHeroStats: " + response);
-            if (response != undefined && response[1] != undefined && (JSON.parse(response[1]).statusCode == undefined || JSON.parse(response[1]).statusCode == 200)) {
+            if (response != undefined && response[1] != undefined && (JSON.parse(response[1]).statusCode == undefined || JSON.parse(response[1]).statusCode == 200) && response[1].length > 100) {
                 pwyf.deleteUserJsonWithParams(row, "3", response[0], "");
                 pwyf.insertUserJson(row, "3", response[0], response[1], "");
                 var overalHeroStats = JSON.parse(response[1]);
@@ -51,8 +51,7 @@ exports.saveUserJson = function (row) {
                     console.log("scheduler getUsersStatsForMultipleHeroes: hero.name" + hero.name);
                     lootbox.getUsersStatsForMultipleHeroes(row, response[0], hero.name).then(function (arrResponse) {
                         console.log("scheduler getUsersStatsForMultipleHeroes: arrResponse" + arrResponse);
-
-                        if (arrResponse != undefined && arrResponse[2] != undefined && (JSON.parse(arrResponse[2]).statusCode == undefined || JSON.parse(arrResponse[2]).statusCode == 200)) {
+                        if (arrResponse != undefined && arrResponse[2] != undefined && (JSON.parse(arrResponse[2]).statusCode == undefined || JSON.parse(arrResponse[2]).statusCode == 200) && arrResponse[2].length > 100) {
                             pwyf.deleteUserJsonWithParams(arrResponse[0], "4", arrResponse[1], arrResponse[3]);
                             pwyf.insertUserJson(arrResponse[0], "4", arrResponse[1], arrResponse[2], arrResponse[3]);
                         }

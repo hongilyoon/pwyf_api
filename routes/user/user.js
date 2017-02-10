@@ -119,4 +119,27 @@ router.post("/save", function (req, res) {
     });
 });
 
+router.get('/last-update-date/:id', function (req, res) {
+
+    conn.getConnection(function (err, connection) {
+        connection.query(userSql.getUserJsonLastUpdateDate, req.params.id, function (err, rows) {
+
+            // 에러 발생시
+            if (err) {
+                throw err;
+                connection.release();
+            }
+
+            console.log('user list: ', rows);
+            if (rows != undefined && rows.length > 0) {
+                res.send(rows[0]);
+            }
+            else {
+                res.send(null);
+            }
+            connection.release();
+        });
+    });
+});
+
 module.exports = router;

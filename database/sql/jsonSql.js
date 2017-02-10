@@ -29,15 +29,16 @@ exports.getFriendsAttributesListTotalCount = "SELECT " +
     " SELECT  " +
     "        '2' AS type " +
     "    FROM " +
-    "        facebook_friends f " +
+    "        facebook_friends f, user u " +
     "    WHERE " +
-    "        f.user_seq = (SELECT  " +
-    "                seq " +
+    "        f.user_seq = u.seq  " +
+    "        AND u.id = ? " +
+    "        AND f.friends_id NOT IN (SELECT " +
+    "                u.id " +
     "            FROM " +
-    "                user " +
+    "                hello_friends h, user u" +
     "            WHERE " +
-    "                id = ?) " +
-    ") A";
+    "                h.friends_seq = u.seq)) A ";
 
 
 exports.getFriendsAttributesList = "SELECT " +
@@ -75,14 +76,16 @@ exports.getFriendsAttributesList = "SELECT " +
     " SELECT  " +
     "        '2' AS type, '' AS seq, f.friends_name AS name, f.friends_id AS id, '' AS tag, '' AS json " +
     "    FROM " +
-    "        facebook_friends f " +
+    "        facebook_friends f, user u " +
     "    WHERE " +
-    "        f.user_seq = (SELECT  " +
-    "                seq " +
+    "        f.user_seq = u.seq  " +
+    "        AND u.id = ? " +
+    "        AND f.friends_id NOT IN (SELECT " +
+    "                u.id " +
     "            FROM " +
-    "                user " +
+    "                hello_friends h, user u" +
     "            WHERE " +
-    "                id = ?)) A " +
+    "                h.friends_seq = u.seq)) A " +
     "ORDER BY type " +
     "LIMIT ? , ?";
 

@@ -6,12 +6,12 @@ var lootbox = require('../service/lootbox');
 var pwyf = require('../service/pwyf');
 var cron = require('node-cron');
 
-cron.schedule('0 */2 * * * *', function () {
+cron.schedule('0 10 * * * *', function () {
     console.log('info', 'running a task of updating user stats every time. ' + new Date());
 
     // 1일 동안 업데이트 안된 대상 명단 조회
     conn.getConnection(function (err, connection) {
-        connection.query(userSql.getUpdateUserList, function (err, rows) {
+                connection.query(userSql.getUpdateUserList, function (err, rows) {
 
             // 에러 발생시
             if (err) {
