@@ -16,16 +16,15 @@ router.get('/list', function (req, res) {
     console.log("get user list");
     conn.getConnection(function (err, connection) {
         connection.query('SELECT * from region', function (err, rows) {
+            connection.release();
 
             // 에러 발생시
             if (err) {
                 throw err;
-                connection.release();
             }
 
             console.log('user list: ', rows);
             res.send(rows);
-            connection.release();
         });
     });
 });

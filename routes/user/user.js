@@ -15,16 +15,15 @@ router.get('/:id', function (req, res) {
 
     conn.getConnection(function (err, connection) {
         connection.query(userSql.getUserListById, req.params.id, function (err, rows) {
+            connection.release();
 
             // 에러 발생시
             if (err) {
                 throw err;
-                connection.release();
             }
 
             console.log('user list: ', rows);
             res.send(rows);
-            connection.release();
         });
     });
 });
@@ -33,16 +32,15 @@ router.get('/list', function (req, res) {
 
     conn.getConnection(function (err, connection) {
         connection.query(userSql.getUserListByDelYn, function (err, rows) {
+            connection.release();
 
             // 에러 발생시
             if (err) {
                 throw err;
-                connection.release();
             }
 
             console.log('user list: ', rows);
             res.send(rows);
-            connection.release();
         });
     });
 });
@@ -57,61 +55,64 @@ router.post("/save", function (req, res) {
 
     conn.getConnection(function (err, connection) {
         connection.query(userSql.getUserListById, [id], function (err, rows) {
+            connection.release();
 
             // 에러 발생시
             if (err) {
                 throw err;
-                connection.release();
             }
 
             // 기존 사용자가 존재하는 경우 Update, 존재하지 않는 경우 Insert
             if (rows.length > 0) {
                 console.log("존재함");
 
-                connection.query(userSql.updateUserInfo, [name, platformSeq,
-                    regionSeq, tag, id], function (err, rows) {
-
-                    // 에러 발생시
-                    if (err) {
-                        throw err;
+                conn.getConnection(function (err, connection) {
+                    connection.query(userSql.updateUserInfo, [name, platformSeq, regionSeq, tag, id], function (err, rows) {
                         connection.release();
-                    }
-
-                    // updateJson(req.body);
-                    res.sendStatus(200);
-                    connection.query(userSql.getUpdateUser, [id], function (err, row) {
 
                         // 에러 발생시
                         if (err) {
                             throw err;
-                            connection.release();
                         }
 
-                        pwyf.saveUserJson(row[0]);
-                        connection.release();
+                        // updateJson(req.body);
+                        res.sendStatus(200);
+                        pwyf.saveUserJson(id);
+                        // connection.query(userSql.getUpdateUser, [id], function (err, row) {
+                        //     connection.release();
+                        //
+                        //     // 에러 발생시
+                        //     if (err) {
+                        //         throw err;
+                        //     }
+                        //
+                        //     pwyf.saveUserJson(row[0]);
+                        // });
                     });
                 });
             } else {
-                connection.query(userSql.insertUserInfo, [name, id,
-                    platformSeq, regionSeq, tag, 'N'], function (err, rows) {
-
-                    // 에러 발생시
-                    if (err) {
-                        throw err;
+                conn.getConnection(function (err, connection) {
+                    connection.query(userSql.insertUserInfo, [name, id,
+                        platformSeq, regionSeq, tag, 'N'], function (err, rows) {
                         connection.release();
-                    }
-
-                    res.sendStatus(200);
-                    connection.query(userSql.getUpdateUser, [id], function (err, row) {
 
                         // 에러 발생시
                         if (err) {
                             throw err;
-                            connection.release();
                         }
 
-                        pwyf.saveUserJson(row[0]);
-                        connection.release();
+                        res.sendStatus(200);
+                        pwyf.saveUserJson(id);
+                        // connection.query(userSql.getUpdateUser, [id], function (err, row) {
+                        //     connection.release();
+                        //
+                        //     // 에러 발생시
+                        //     if (err) {
+                        //         throw err;
+                        //     }
+                        //
+                        //     pwyf.saveUserJson(row[0]);
+                        // });
                     });
                 });
             }
@@ -123,11 +124,11 @@ router.get('/last-update-date/:id', function (req, res) {
 
     conn.getConnection(function (err, connection) {
         connection.query(userSql.getUserJsonLastUpdateDate, req.params.id, function (err, rows) {
+            connection.release();
 
             // 에러 발생시
             if (err) {
                 throw err;
-                connection.release();
             }
 
             console.log('user list: ', rows);
@@ -137,7 +138,6 @@ router.get('/last-update-date/:id', function (req, res) {
             else {
                 res.send(null);
             }
-            connection.release();
         });
     });
 });

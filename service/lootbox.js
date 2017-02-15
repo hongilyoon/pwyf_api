@@ -25,7 +25,7 @@ exports.getUsersStats = function (row) {
     return rp({
         method: 'GET',
         uri: urlString,
-        timeout: 10000 * 60,
+        timeout: 10 * 60 * 1000,
     })
         .then(function (response) {
             return response;
@@ -43,7 +43,7 @@ exports.getUsersAchievements = function (row) {
     return rp({
         method: 'GET',
         uri: urlString,
-        timeout: 10000 * 60,
+        timeout: 10 * 60 * 1000,
     })
         .then(function (response) {
             return response;
@@ -61,7 +61,7 @@ exports.getUsersStatsForAllHeroes = function (row, mode) {
     return rp({
         method: 'GET',
         uri: urlString,
-        timeout: 10000 * 60,
+        timeout: 10 * 60 * 1000,
     })
         .then(function (response) {
             return [mode, response];
@@ -79,7 +79,7 @@ exports.getOverallHeroStats = function (row, mode) {
     return rp({
         method: 'GET',
         uri: urlString,
-        timeout: 10000 * 60,
+        timeout: 10 * 60 * 1000,
     })
         .then(function (response) {
             return [mode, response];
@@ -91,17 +91,18 @@ exports.getOverallHeroStats = function (row, mode) {
 }
 
 // 여러 영웅의 능력치를 조회
-exports.getUsersStatsForMultipleHeroes = function (row, mode, heroname) {
-    var replaceName = heroname.replace(/&#xFA;/g, "u").replace(/&#xF6;/g, "o");
-    var urlString = usersStatsForMultipleHeroesUrl.replace(/{platform}/g, row.platformName).replace(/{region}/g, row.regionName).replace(/{tag}/g, encodeURIComponent(row.tag)).replace(/{mode}/g, mode).replace(/{heroes}/g, replaceName);
+exports.getUsersStatsForMultipleHeroes = function (row) {
+    var replaceName = row.heroName.replace(/&#xFA;/g, "u").replace(/&#xF6;/g, "o");
+    var urlString = usersStatsForMultipleHeroesUrl.replace(/{platform}/g, row.platformName).replace(/{region}/g, row.regionName).replace(/{tag}/g, encodeURIComponent(row.tag)).replace(/{mode}/g, row.subtype).replace(/{heroes}/g, replaceName);
     console.log("urlString: " + urlString);
     return rp({
         method: 'GET',
         uri: urlString,
-        timeout: 10000 * 60,
+        timeout: 10 * 60 * 1000,
     })
         .then(function (response) {
-            return [row, mode, response, heroname];
+            console.log("called getUsersStatsForMultipleHeroes #########################################################################")
+            return [row, response];
         })
         .catch(function (err) {
             // Something bad happened, handle the error

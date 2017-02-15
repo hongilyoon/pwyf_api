@@ -20,16 +20,15 @@ router.post("/save", function (req, res) {
             // 해당 user Seq의 Facebook 친구 목록을 조회합니다.
             conn.getConnection(function (err, connection) {
                 connection.query("select friends_id as friendsId from facebook_friends where user_seq = ?", [userSeq], function (err, rows) {
+                    connection.release();
 
                     // 에러 발생시
                     if (err) {
                         callback(err);
-                        connection.release();
                     }
 
                     // 정상 조회
                     callback(null, rows);
-                    connection.release();
                 });
             });
         },
@@ -54,16 +53,15 @@ router.post("/save", function (req, res) {
 
                 conn.getConnection(function (err, connection) {
                     connection.query("insert into facebook_friends (user_seq, friends_id, friends_name) VALUES ?", [arrParam], function (err, rows) {
+                        connection.release();
 
                         // 에러 발생시
                         if (err) {
                             callback(err);
-                            connection.release();
                         }
 
                         // 정상 조회
                         callback(null);
-                        connection.release();
                     });
                 });
             } else {
