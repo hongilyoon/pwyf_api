@@ -9,7 +9,7 @@ var promise = require('promise');
 var sleep = require('thread-sleep');
 var timers = require('timers');
 
-exports.saveUserJson = function(id) {
+exports.saveUserJson = function (id) {
 
     // 업데이트 대상 명단 조회
     conn.getConnection(function (err, connection) {
@@ -29,34 +29,49 @@ exports.saveUserJson = function(id) {
     });
 
     // 업데이트 대상 명단 조회
-    conn.getConnection(function (err, connection) {
-        connection.query(jsonSql.selectAllHeroList, [id, id], function (err, rows) {
-            connection.release();
+    setTimeout(function () {
 
-            // 에러 발생시
-            if (err) {
-                throw err;
-            }
+        conn.getConnection(function (err, connection) {
+            connection.query(jsonSql.selectAllHeroList, [id, id], function (err, rows) {
+                connection.release();
 
-            var list = new Array();
-            rows.forEach(function(row) {
-                var idx = 0;
-                JSON.parse(row.json).forEach(function (hero) {
-                    list.push({idx: idx++, tag: row.tag, subtype: row.subtype, heroName: hero.name, platformName: row.platformName, regionName: row.regionName});
+                // 에러 발생시
+                if (err) {
+                    throw err;
+                }
+
+                var list = new Array();
+                rows.forEach(function (row) {
+                    var idx = 0;
+                    if (row.json != null) {
+                        JSON.parse(row.json).forEach(function (hero) {
+                            list.push({
+                                idx: idx++,
+                                tag: row.tag,
+                                subtype: row.subtype,
+                                heroName: hero.name,
+                                platformName: row.platformName,
+                                regionName: row.regionName
+                            });
+                        });
+                    }
                 });
+
+                if (list.length > 0) {
+                    for (var i = 0, cnt = list.length / 10; i < cnt; i++) {
+                        var sttIdx = i * 10;
+                        var endIdx = i < cnt - 1 ? (i + 1) * 10 : list.length;
+                        var sliceList = list.slice(sttIdx, endIdx);
+                        setTimeout(function (sliceList) {
+                            sliceList.forEach(function (result) {
+                                pwyf.getUsersStatsForMultipleHeroes(result);
+                            });
+                        }, (i * 60 * 1000) + 60 * 1000, sliceList);
+                    }
+                }
             });
 
-            for (var i = 0, cnt = list.length / 10; i < cnt; i++ ) {
-                var sttIdx = i * 10;
-                var endIdx = i < cnt - 1 ? (i + 1) * 10 : list.length;
-                var sliceList = list.slice(sttIdx, endIdx);
-                setTimeout(function (sliceList) {
-                    sliceList.forEach(function(result) {
-                        pwyf.getUsersStatsForMultipleHeroes(result);
-                    });
-                }, (i * 60 * 1000) + 60 * 1000, sliceList);
-            }
-        });
+        }, 60 * 1000);
     });
 };
 

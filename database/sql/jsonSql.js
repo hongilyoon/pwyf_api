@@ -84,7 +84,7 @@ exports.selectTagListForUpdate = "SELECT \n" +
     "    LEFT OUTER JOIN region r ON u.region_seq = r.seq\n" +
     "    WHERE\n" +
     "        u.del_yn = 'N' and (? = '' or u.id = ?)\n" +
-    "    GROUP BY u.tag , j.tag) A\n" +
+    "    GROUP BY u.tag , j.tag, p.name, r.name) A\n" +
     "WHERE\n" +
     "    A.modDate IS NULL\n" +
     "        OR A.modDate < DATE_ADD(NOW(), INTERVAL - 3 HOUR)";
@@ -106,7 +106,7 @@ exports.selectAllHeroList = "SELECT \n" +
     "    LEFT OUTER JOIN region r ON u.region_seq = r.seq\n" +
     "    WHERE\n" +
     "        u.del_yn = 'N' and (? = '' or u.id = ?) \n" +
-    "    GROUP BY u.tag , j.tag , j.subtype) A\n" +
+    "    GROUP BY u.tag , j.tag, j.json, j.subtype, p.name, r.name) A\n" +
     "WHERE\n" +
     "    A.modDate IS NULL\n" +
     "        OR A.modDate < DATE_ADD(NOW(), INTERVAL - 3 HOUR)";
