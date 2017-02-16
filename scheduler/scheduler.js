@@ -119,12 +119,24 @@ cron.schedule('40 */3 * * *', function () {
             }
 
             var list = new Array();
-            rows.forEach(function(row) {
-                var idx = 0;
-                JSON.parse(row.json).forEach(function (hero) {
-                    list.push({idx: idx++, tag: row.tag, subtype: row.subtype, heroName: hero.name, platformName: row.platformName, regionName: row.regionName});
+
+            if (rows != null && rows.length > 0) {
+                rows.forEach(function (row) {
+                    if (row.json != null) {
+                        var idx = 0;
+                        JSON.parse(row.json).forEach(function (hero) {
+                            list.push({
+                                idx: idx++,
+                                tag: row.tag,
+                                subtype: row.subtype,
+                                heroName: hero.name,
+                                platformName: row.platformName,
+                                regionName: row.regionName
+                            });
+                        });
+                    }
                 });
-            });
+            }
 
             for (var i = 0, cnt = list.length / 10; i < cnt; i++ ) {
                 var sttIdx = i * 10;

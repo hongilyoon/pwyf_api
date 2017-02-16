@@ -78,16 +78,6 @@ router.post("/save", function (req, res) {
                         // updateJson(req.body);
                         res.sendStatus(200);
                         pwyf.saveUserJson(id);
-                        // connection.query(userSql.getUpdateUser, [id], function (err, row) {
-                        //     connection.release();
-                        //
-                        //     // 에러 발생시
-                        //     if (err) {
-                        //         throw err;
-                        //     }
-                        //
-                        //     pwyf.saveUserJson(row[0]);
-                        // });
                     });
                 });
             } else {
@@ -103,16 +93,6 @@ router.post("/save", function (req, res) {
 
                         res.sendStatus(200);
                         pwyf.saveUserJson(id);
-                        // connection.query(userSql.getUpdateUser, [id], function (err, row) {
-                        //     connection.release();
-                        //
-                        //     // 에러 발생시
-                        //     if (err) {
-                        //         throw err;
-                        //     }
-                        //
-                        //     pwyf.saveUserJson(row[0]);
-                        // });
                     });
                 });
             }

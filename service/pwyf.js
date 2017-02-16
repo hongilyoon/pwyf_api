@@ -13,7 +13,7 @@ exports.saveUserJson = function (id) {
 
     // 업데이트 대상 명단 조회
     conn.getConnection(function (err, connection) {
-        connection.query(jsonSql.selectTagListForUpdate, ["3", id, id], function (err, rows) {
+        connection.query(userSql.getUpdateUser, [id], function (err, rows) {
             connection.release();
 
             // 에러 발생시
@@ -30,7 +30,6 @@ exports.saveUserJson = function (id) {
 
     // 업데이트 대상 명단 조회
     setTimeout(function () {
-
         conn.getConnection(function (err, connection) {
             connection.query(jsonSql.selectAllHeroList, [id, id], function (err, rows) {
                 connection.release();
@@ -41,21 +40,23 @@ exports.saveUserJson = function (id) {
                 }
 
                 var list = new Array();
-                rows.forEach(function (row) {
-                    var idx = 0;
-                    if (row.json != null) {
-                        JSON.parse(row.json).forEach(function (hero) {
-                            list.push({
-                                idx: idx++,
-                                tag: row.tag,
-                                subtype: row.subtype,
-                                heroName: hero.name,
-                                platformName: row.platformName,
-                                regionName: row.regionName
+                if (rows != null && rows.length > 0) {
+                    rows.forEach(function (row) {
+                        if (row.json != null) {
+                            var idx = 0;
+                            JSON.parse(row.json).forEach(function (hero) {
+                                list.push({
+                                    idx: idx++,
+                                    tag: row.tag,
+                                    subtype: row.subtype,
+                                    heroName: hero.name,
+                                    platformName: row.platformName,
+                                    regionName: row.regionName
+                                });
                             });
-                        });
-                    }
-                });
+                        }
+                    });
+                }
 
                 if (list.length > 0) {
                     for (var i = 0, cnt = list.length / 10; i < cnt; i++) {
@@ -71,8 +72,10 @@ exports.saveUserJson = function (id) {
                 }
             });
 
-        }, 60 * 1000);
-    });
+        });
+    }, 60 * 1000);
+
+    console.log("saveUserJson4: " + new Date());
 };
 
 exports.saveUsersStats = function (row) {
