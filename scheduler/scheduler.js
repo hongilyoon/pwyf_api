@@ -5,7 +5,7 @@ var helloFriendsSql = require('../database/sql/helloFriendsSql');
 var pwyf = require('../service/pwyf');
 var cron = require('node-cron');
 
-cron.schedule('0 */3 * * *', function () {
+cron.schedule('0 */3 * * * *', function () {
     console.log('info', 'running a task of updating saveUsersStats every time. ' + new Date());
 
     // 1일 동안 업데이트 안된 대상 명단 조회
@@ -156,7 +156,7 @@ cron.schedule('40 */3 * * *', function () {
 cron.schedule('0 */10 * * * *', function () {
     console.log('info', 'running a task of updating hello friends list every time. ' + new Date());
 
-    // 1일 동안 업데이트 안된 대상 명단 조회
+    // 친구 목록 업데이트
     conn.getConnection(function (err, connection) {
         connection.query(helloFriendsSql.insertHelloFriendsList, function (err, rows) {
             connection.release();

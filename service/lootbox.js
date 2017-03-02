@@ -26,6 +26,7 @@ exports.getUsersStats = function (row) {
         method: 'GET',
         uri: urlString,
         timeout: 10 * 60 * 1000,
+        rejectUnauthorized: false
     })
         .then(function (response) {
             return response;
@@ -34,7 +35,7 @@ exports.getUsersStats = function (row) {
             // Something bad happened, handle the error
             console.log("err: " + err);
         });
-}
+};
 
 // 사용자 성과 조회
 exports.getUsersAchievements = function (row) {
@@ -44,6 +45,7 @@ exports.getUsersAchievements = function (row) {
         method: 'GET',
         uri: urlString,
         timeout: 10 * 60 * 1000,
+        rejectUnauthorized: false
     })
         .then(function (response) {
             return response;
@@ -52,7 +54,7 @@ exports.getUsersAchievements = function (row) {
             // Something bad happened, handle the error
             console.log("err: " + err);
         });
-}
+};
 
 // 사용자의 모든 영웅을 조회
 exports.getUsersStatsForAllHeroes = function (row, mode) {
@@ -62,6 +64,7 @@ exports.getUsersStatsForAllHeroes = function (row, mode) {
         method: 'GET',
         uri: urlString,
         timeout: 10 * 60 * 1000,
+        rejectUnauthorized: false
     })
         .then(function (response) {
             return [mode, response];
@@ -70,7 +73,7 @@ exports.getUsersStatsForAllHeroes = function (row, mode) {
             // Something bad happened, handle the error
             console.log("err: " + err);
         });
-}
+};
 
 // 영웅의 전반적인 상태 조회
 exports.getOverallHeroStats = function (row, mode) {
@@ -80,6 +83,7 @@ exports.getOverallHeroStats = function (row, mode) {
         method: 'GET',
         uri: urlString,
         timeout: 10 * 60 * 1000,
+        rejectUnauthorized: false
     })
         .then(function (response) {
             return [mode, response];
@@ -88,7 +92,7 @@ exports.getOverallHeroStats = function (row, mode) {
             // Something bad happened, handle the error
             console.log("err: " + err);
         });
-}
+};
 
 // 여러 영웅의 능력치를 조회
 exports.getUsersStatsForMultipleHeroes = function (row) {
@@ -99,6 +103,7 @@ exports.getUsersStatsForMultipleHeroes = function (row) {
         method: 'GET',
         uri: urlString,
         timeout: 10 * 60 * 1000,
+        rejectUnauthorized: false
     })
         .then(function (response) {
             console.log("called getUsersStatsForMultipleHeroes #########################################################################")
@@ -108,4 +113,4 @@ exports.getUsersStatsForMultipleHeroes = function (row) {
             // Something bad happened, handle the error
             console.log("err: " + err);
         });
-}
+};

@@ -1,6 +1,7 @@
 var express = require('express');
 var async = require('async');
 var conn = require('../../database/sql/connectionString');
+var helloFriendsSql = require('../../database/sql/helloFriendsSql');
 var router = express.Router();
 
 router.use(function timeLog(req, res, next) {
@@ -61,7 +62,21 @@ router.post("/save", function (req, res) {
                         }
 
                         // 정상 조회
-                        callback(null);
+                        // 친구 목록 업데이트
+                        conn.getConnection(function (err, connection) {
+                            connection.query(helloFriendsSql.insertHelloFriendsList, function (err, rows) {
+                                connection.release();
+
+                                // 에러 발생시
+                                if (err) {
+                                    callback(err);
+                                }
+
+                                // 정상 조회
+                                console.log("updating facebook friends list: " + rows);
+                                callback(null);
+                            });
+                        });
                     });
                 });
             } else {
