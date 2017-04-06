@@ -22,36 +22,39 @@ exports.getFriendsAttributesListTotalCount = "SELECT \n" +
     "    GROUP BY h.user_seq) A";
 
 // 친구 목록을 조회합니다.
-exports.getFriendsAttributesList = "SELECT \n" +
-    "    A.*\n" +
-    "FROM\n" +
-    "    (SELECT \n" +
-    "        '0' AS type,\n" +
-    "            u.seq AS seq,\n" +
-    "            u.name AS name,\n" +
-    "            u.id AS id,\n" +
-    "            u.tag AS tag,\n" +
-    "            j.json AS json\n" +
-    "    FROM\n" +
-    "        user u, json j\n" +
-    "    WHERE\n" +
-    "        u.tag = j.tag\n" +
-    "            AND u.id = ? \n" +
-    "            AND j.type = ? UNION SELECT \n" +
-    "        '1' AS type,\n" +
-    "            h.friends_seq AS seq,\n" +
-    "            u.name AS name,\n" +
-    "            u.id AS id,\n" +
-    "            u.tag AS tag,\n" +
-    "            j.json AS json\n" +
-    "    FROM\n" +
-    "        hello_friends h, user u, json j\n" +
-    "    WHERE\n" +
-    "        h.friends_seq = u.seq AND u.tag = j.tag\n" +
-    "            AND u.id = ? \n" +
-    "            AND j.type = ?) A\n" +
-    "ORDER BY type\n" +
-    "LIMIT ? , ?";
+exports.getFriendsAttributesList = "SELECT  \n" +
+    "        A.* \n" +
+    "    FROM \n" +
+    "        (SELECT  \n" +
+    "            '0' AS type, \n" +
+    "                u.seq AS seq, \n" +
+    "                u.name AS name, \n" +
+    "                u.id AS id, \n" +
+    "                u.tag AS tag, \n" +
+    "                j.json AS json \n" +
+    "        FROM \n" +
+    "            user u, json j \n" +
+    "        WHERE \n" +
+    "            u.tag = j.tag \n" +
+    "                AND u.id = ?  \n" +
+    "                AND j.type = ? \n" +
+    "\t\tUNION SELECT  \n" +
+    "            '1' AS type, \n" +
+    "                h.friends_seq AS seq, \n" +
+    "                u2.name AS name, \n" +
+    "                u2.id AS id, \n" +
+    "                u2.tag AS tag, \n" +
+    "                j.json AS json \n" +
+    "        FROM \n" +
+    "            hello_friends h, user u1, user u2, json j \n" +
+    "        WHERE \n" +
+    "\t\t\th.user_seq = u1.seq\n" +
+    "            AND h.friends_seq = u2.seq \n" +
+    "            AND u1.id = ? \n" +
+    "            AND u2.tag = j.tag \n" +
+    "            AND j.type = ?) A \n" +
+    "    ORDER BY type \n" +
+    "    LIMIT ? , ?";
 
 // 삭제합니다.
 exports.deleteUserJson = "DELETE FROM json WHERE tag = ?";

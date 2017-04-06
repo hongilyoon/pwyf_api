@@ -37,8 +37,10 @@ router.post("/save", function (req, res) {
 
             // 조회한 친구목록과 등록하고자하는 친구목록을 비교하여 이미 있는 친구목록은 삭제합니다.
             for (var i = friends.length - 1; i >= 0; i--) {
+                console.log("facebook save. input all friendId: " + friends[i].id + ", friendName: " + friends[i].name);
                 for (var j = 0; j < rows.length; j++) {
                     if (friends[i].id == rows[j].friendsId) {
+                        console.log("facebook save. slice friendId: " + friends[i].id + ", friendName: " + friends[i].name);
                         friends.splice(i, 1);
                         break;
                     }
