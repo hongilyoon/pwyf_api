@@ -2,10 +2,12 @@ var express = require('express');
 var async = require('async');
 var conn = require('../../database/sql/connectionString');
 var helloFriendsSql = require('../../database/sql/helloFriendsSql');
+var logger = require('../../utils/logger');
+var utils = require('util')
 var router = express.Router();
 
 router.use(function timeLog(req, res, next) {
-    console.log('Time: ', Date.now());
+    logger.getLogger().info(utils.format('Time: ', Date.now()));
     next();
 });
 
@@ -14,7 +16,6 @@ router.post("/save", function (req, res) {
 
     var userSeq = req.body.userSeq;
     var friends = req.body.friends;
-
     async.waterfall([
         function (callback) {
 
@@ -37,10 +38,10 @@ router.post("/save", function (req, res) {
 
             // 조회한 친구목록과 등록하고자하는 친구목록을 비교하여 이미 있는 친구목록은 삭제합니다.
             for (var i = friends.length - 1; i >= 0; i--) {
-                console.log("facebook save. input all friendId: " + friends[i].id + ", friendName: " + friends[i].name);
+                logger.getLogger().info(utils.format("facebook save. input all friendId: " + friends[i].id + ", friendName: " + friends[i].name));
                 for (var j = 0; j < rows.length; j++) {
                     if (friends[i].id == rows[j].friendsId) {
-                        console.log("facebook save. slice friendId: " + friends[i].id + ", friendName: " + friends[i].name);
+                        logger.getLogger().info(utils.format("facebook save. slice friendId: " + friends[i].id + ", friendName: " + friends[i].name));
                         friends.splice(i, 1);
                         break;
                     }
@@ -50,7 +51,7 @@ router.post("/save", function (req, res) {
             if (friends.length > 0) {
                 var arrParam = [];
                 friends.forEach(function (friend) {
-                    console.log("userSeq: " + userSeq + ", friend.id: " + friend.id + ", friend.name: " + friend.name);
+                    logger.getLogger().info(utils.format("facebook add user. userSeq: " + userSeq + ", friend.id: " + friend.id + ", friend.name: " + friend.name));
                     arrParam.push([userSeq, friend.id, friend.name]);
                 });
 
@@ -75,22 +76,21 @@ router.post("/save", function (req, res) {
                                 }
 
                                 // 정상 조회
-                                console.log("updating facebook friends list: " + rows);
+                                logger.getLogger().info(utils.format("updating facebook friends list: " + rows));
                                 callback(null);
                             });
                         });
                     });
                 });
             } else {
-                console.log("already saved your friends list.");
+                logger.getLogger().info("already saved your friends list.");
                 callback(null);
             }
         }], function (err) {
         if (err) {
-            console.log("err: " + err);
+            logger.getLogger().info(utils.format("err: " + err));
             res.send(err);
         } else {
-            console.log("success");
             res.sendStatus(200);
         }
     });

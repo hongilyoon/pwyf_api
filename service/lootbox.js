@@ -2,6 +2,8 @@ var conn = require('../database/sql/connectionString');
 var jsonSql = require('../database/sql/jsonSql');
 var userSql = require('../database/sql/userSql');
 var rp = require('request-promise')
+var logger = require('../utils/logger');
+var utils = require('util')
 
 // Type: 0, Stats 조회하는 url
 var usersStatsUrl = "https://api.lootbox.eu/{platform}/{region}/{tag}/profile";
@@ -21,7 +23,7 @@ var usersStatsForMultipleHeroesUrl = "https://api.lootbox.eu/{platform}/{region}
 // 사용자 능력치 조회
 exports.getUsersStats = function (row) {
     var urlString = usersStatsUrl.replace(/{platform}/g, row.platformName).replace(/{region}/g, row.regionName).replace(/{tag}/g, encodeURIComponent(row.tag));
-    console.log("urlString: " + urlString);
+    logger.getLogger().info(utils.format("urlString: " + urlString));
     return rp({
         method: 'GET',
         uri: urlString,
@@ -32,15 +34,14 @@ exports.getUsersStats = function (row) {
             return response;
         })
         .catch(function (err) {
-            // Something bad happened, handle the error
-            console.log("err: " + err);
+            logger.getLogger().error(err);
         });
 };
 
 // 사용자 성과 조회
 exports.getUsersAchievements = function (row) {
     var urlString = usersAchievementsUrl.replace(/{platform}/g, row.platformName).replace(/{region}/g, row.regionName).replace(/{tag}/g, encodeURIComponent(row.tag));
-    console.log("urlString: " + urlString);
+    logger.getLogger().info(utils.format("urlString: " + urlString));
     return rp({
         method: 'GET',
         uri: urlString,
@@ -51,15 +52,14 @@ exports.getUsersAchievements = function (row) {
             return response;
         })
         .catch(function (err) {
-            // Something bad happened, handle the error
-            console.log("err: " + err);
+            logger.getLogger().error(err);
         });
 };
 
 // 사용자의 모든 영웅을 조회
 exports.getUsersStatsForAllHeroes = function (row, mode) {
     var urlString = usersStatsForAllHeroesUrl.replace(/{platform}/g, row.platformName).replace(/{region}/g, row.regionName).replace(/{tag}/g, encodeURIComponent(row.tag)).replace(/{mode}/g, mode);
-    console.log("urlString: " + urlString);
+    logger.getLogger().info(utils.format("urlString: " + urlString));
     return rp({
         method: 'GET',
         uri: urlString,
@@ -70,15 +70,14 @@ exports.getUsersStatsForAllHeroes = function (row, mode) {
             return [mode, response];
         })
         .catch(function (err) {
-            // Something bad happened, handle the error
-            console.log("err: " + err);
+            logger.getLogger().error(err);
         });
 };
 
 // 영웅의 전반적인 상태 조회
 exports.getOverallHeroStats = function (row, mode) {
     var urlString = overallHeroStatsUrl.replace(/{platform}/g, row.platformName).replace(/{region}/g, row.regionName).replace(/{tag}/g, encodeURIComponent(row.tag)).replace(/{mode}/g, mode);
-    console.log("urlString: " + urlString);
+    logger.getLogger().info(utils.format("urlString: " + urlString));
     return rp({
         method: 'GET',
         uri: urlString,
@@ -89,8 +88,7 @@ exports.getOverallHeroStats = function (row, mode) {
             return [mode, response];
         })
         .catch(function (err) {
-            // Something bad happened, handle the error
-            console.log("err: " + err);
+            logger.getLogger().error(err);
         });
 };
 
@@ -98,7 +96,7 @@ exports.getOverallHeroStats = function (row, mode) {
 exports.getUsersStatsForMultipleHeroes = function (row) {
     var replaceName = row.heroName.replace(/&#xFA;/g, "u").replace(/&#xF6;/g, "o");
     var urlString = usersStatsForMultipleHeroesUrl.replace(/{platform}/g, row.platformName).replace(/{region}/g, row.regionName).replace(/{tag}/g, encodeURIComponent(row.tag)).replace(/{mode}/g, row.subtype).replace(/{heroes}/g, replaceName);
-    console.log("urlString: " + urlString);
+    logger.getLogger().info(utils.format("urlString: " + urlString));
     return rp({
         method: 'GET',
         uri: urlString,
@@ -106,11 +104,9 @@ exports.getUsersStatsForMultipleHeroes = function (row) {
         rejectUnauthorized: false
     })
         .then(function (response) {
-            console.log("called getUsersStatsForMultipleHeroes #########################################################################")
             return [row, response];
         })
         .catch(function (err) {
-            // Something bad happened, handle the error
-            console.log("err: " + err);
+            logger.getLogger().error(err);
         });
 };

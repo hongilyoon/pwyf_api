@@ -10,7 +10,6 @@ var region = require('./routes/code/region');
 var platform = require('./routes/code/platform');
 var attribute = require('./routes/attribute/json');
 var scheduler = require('./scheduler/scheduler');
-var friends = require('./routes/friends/friends');
 
 var app = express();
 var port = process.env.PORT || 3000;

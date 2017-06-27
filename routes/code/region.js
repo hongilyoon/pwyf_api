@@ -1,9 +1,11 @@
 var express = require('express');
 var router = express.Router();
 var conn = require('../../database/sql/connectionString');
+var logger = require('../../utils/logger');
+var utils = require('util')
 
 router.use(function timeLog(req, res, next) {
-    console.log('Time: ', Date.now());
+    logger.getLogger().info(utils.format('Time: ', Date.now()));
     next();
 });
 
@@ -12,8 +14,6 @@ router.get('/', function (req, res) {
 });
 
 router.get('/list', function (req, res) {
-
-    console.log("get user list");
     conn.getConnection(function (err, connection) {
         connection.query('SELECT * from region', function (err, rows) {
             connection.release();
@@ -23,7 +23,6 @@ router.get('/list', function (req, res) {
                 throw err;
             }
 
-            console.log('user list: ', rows);
             res.send(rows);
         });
     });

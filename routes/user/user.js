@@ -3,11 +3,14 @@ var async = require('async');
 var conn = require('../../database/sql/connectionString');
 var userSql = require('../../database/sql/userSql');
 var lootbox = require('../../service/lootbox');
+var playoverwatch = require('../../service/playoverwatch');
 var pwyf = require('../../service/pwyf');
+var logger = require('../../utils/logger');
+var utils = require('util')
 var router = express.Router();
 
 router.use(function timeLog(req, res, next) {
-    console.log('Time: ', Date.now());
+    logger.getLogger().info(utils.format('Time: ', Date.now()));
     next();
 });
 
@@ -19,10 +22,10 @@ router.get('/:id', function (req, res) {
 
             // 에러 발생시
             if (err) {
+                logger.getLogger().error(err);
                 throw err;
             }
 
-            console.log('user list: ', rows);
             res.send(rows);
         });
     });
@@ -39,7 +42,6 @@ router.get('/list', function (req, res) {
                 throw err;
             }
 
-            console.log('user list: ', rows);
             res.send(rows);
         });
     });
@@ -64,18 +66,16 @@ router.post("/save", function (req, res) {
 
             // 기존 사용자가 존재하는 경우 Update, 존재하지 않는 경우 Insert
             if (rows.length > 0) {
-                console.log("존재함");
-
                 conn.getConnection(function (err, connection) {
                     connection.query(userSql.updateUserInfo, [name, platformSeq, regionSeq, tag, id], function (err, rows) {
                         connection.release();
 
                         // 에러 발생시
                         if (err) {
+                            logger.getLogger().error(err);
                             throw err;
                         }
 
-                        // updateJson(req.body);
                         res.sendStatus(200);
                         pwyf.saveUserJson(id);
                     });
@@ -88,6 +88,7 @@ router.post("/save", function (req, res) {
 
                         // 에러 발생시
                         if (err) {
+                            logger.getLogger().error(err);
                             throw err;
                         }
 
@@ -111,7 +112,6 @@ router.get('/last-update-date/:id', function (req, res) {
                 throw err;
             }
 
-            console.log('user list: ', rows);
             if (rows != undefined && rows.length > 0) {
                 res.send(rows[0]);
             }
@@ -119,6 +119,13 @@ router.get('/last-update-date/:id', function (req, res) {
                 res.send(null);
             }
         });
+    });
+});
+
+router.get('/playoverwatch/:tagId', function (req, res) {
+    var result = playoverwatch.getExample(req.params.tagId).then(function (result) {
+        res.contentType('application/json');
+        res.send(JSON.stringify(result));
     });
 });
 
