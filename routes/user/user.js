@@ -122,6 +122,13 @@ router.get('/last-update-date/:id', function (req, res) {
     });
 });
 
+router.get('/playoverwatch/:tagId', function (req, res) {
+    var result = playoverwatch.getUser(req.params.tagId).then(function (result) {
+        res.contentType('application/json');
+        res.send(JSON.stringify(result));
+    });
+});
+
 router.get('/playoverwatch/main/:type/:tagId', function (req, res) {
     var result = playoverwatch.getMainStatistics(req.params.type, req.params.tagId).then(function (result) {
         res.contentType('application/json');

@@ -23,6 +23,39 @@ var arrTotalStaticsKeys = ["0x02E00000FFFFFFFF", "0x02E0000000000002", "0x02E000
     "0x02E0000000000065", "0x02E0000000000068", "0x02E000000000006E", "0x02E0000000000079", "0x02E000000000007A", "0x02E00000000000DD",
     "0x02E000000000012E", "0x02E000000000013B", "0x02E000000000013E"];
 
+exports.getUser = function(tagId) {
+    var url = playOverwatchUrl + tagId;
+    url = "https://playoverwatch.com/ko-kr/career/pc/kr/%EB%A5%98%ED%81%AC%EC%8A%A4%EC%B9%B4%EC%9D%B4%EC%9B%8C%EC%BB%A4-3143";
+    return rp({
+        method: 'GET',
+        uri: url,
+        timeout: 10 * 60 * 1000,
+        rejectUnauthorized: false
+    })
+    .then(function (response) {
+        var $ = cheerio.load(response);
+        var divMaterHead = $("div.masthead-player");
+        var avatar = $(divMaterHead).find("img").attr("src");
+        var userName = $(divMaterHead).find("h1").text();
+
+        var divCompetitiveRank = $(divMaterHead).find("div.competitive-rank");
+        var competitiveRankImg = $(divCompetitiveRank).find("img").attr("src");
+        var competitiveRank = $(divCompetitiveRank).find("div").text();
+
+        var divPlayerLevel = $(divMaterHead).find("div.player-level");
+        var playerLevelImgBorder = $(divPlayerLevel).attr("style").replace("background-image:url(", "").replace(")", "");
+        var playerLevelImg = $(divMaterHead).find("div.player-rank").attr("style").replace("background-image:url(", "").replace(")", "");
+        var playerLevel = $($(divPlayerLevel).find("div")[0]).text();
+
+        return {"userName" : userName, "avatar" : avatar,
+            "competitiveRankImg": competitiveRankImg, "competitiveRank": competitiveRank,
+            "playerLevel": playerLevel, "playerLevelImg": playerLevelImg, "playerLevelImgBorder": playerLevelImgBorder};
+    })
+    .catch(function (err) {
+        logger.getLogger().error(err);
+    });
+};
+
 exports.getMainStatistics = function (type, tagId) {
     var url = playOverwatchUrl + tagId;
     url = "https://playoverwatch.com/ko-kr/career/pc/kr/%EB%A5%98%ED%81%AC%EC%8A%A4%EC%B9%B4%EC%9D%B4%EC%9B%8C%EC%BB%A4-3143";
