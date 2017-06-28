@@ -7,7 +7,7 @@ var utils = require('util')
 var request = require("request");
 var cheerio = require("cheerio");
 var promise = require('promise');
-var playOverwatchUrl = "https://playoverwatch.com/en-us/career/pc/us/";
+var playOverwatchUrl = "https://playoverwatch.com/en-us/career/pc/{region}/";
 
 var heroCnt = 24;
 var arrQuckPlayProperties = ["playTime", "victoriousGames", "accuracy", "perLife", "simultaneousTreatment", "missionContribution"];
@@ -23,8 +23,8 @@ var arrTotalStaticsKeys = ["0x02E00000FFFFFFFF", "0x02E0000000000002", "0x02E000
     "0x02E0000000000065", "0x02E0000000000068", "0x02E000000000006E", "0x02E0000000000079", "0x02E000000000007A", "0x02E00000000000DD",
     "0x02E000000000012E", "0x02E000000000013B", "0x02E000000000013E"];
 
-exports.getUser = function(tagId) {
-    var url = playOverwatchUrl + encodeURIComponent(tagId);
+exports.getUser = function(region, tagId) {
+    var url = playOverwatchUrl.replace("{region}", region) + encodeURIComponent(tagId);
     return rp({
         method: 'GET',
         uri: url,
@@ -56,8 +56,8 @@ exports.getUser = function(tagId) {
     });
 };
 
-exports.getMainStatistics = function (type, tagId) {
-    var url = playOverwatchUrl + encodeURIComponent(tagId);
+exports.getMainStatistics = function (region, type, tagId) {
+    var url = playOverwatchUrl.replace("{region}", region) + encodeURIComponent(tagId);
     return rp({
         method: 'GET',
         uri: url,
@@ -82,8 +82,8 @@ exports.getMainStatistics = function (type, tagId) {
     });
 };
 
-exports.getHeroesStatistics = function (type, tagId) {
-    var url = playOverwatchUrl + encodeURIComponent(tagId);
+exports.getHeroesStatistics = function (region, type, tagId) {
+    var url = playOverwatchUrl.replace("{region}", region) + encodeURIComponent(tagId);
     return rp({
         method: 'GET',
         uri: url,
@@ -115,8 +115,8 @@ exports.getHeroesStatistics = function (type, tagId) {
     });
 };
 
-exports.getTotalStatistics = function (type, tagId) {
-    var url = playOverwatchUrl + encodeURIComponent(tagId);
+exports.getTotalStatistics = function (region, type, tagId) {
+    var url = playOverwatchUrl.replace("{region}", region) + encodeURIComponent(tagId);
     return rp({
         method: 'GET',
         uri: url,
