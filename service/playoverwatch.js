@@ -7,7 +7,7 @@ var utils = require('util')
 var request = require("request");
 var cheerio = require("cheerio");
 var promise = require('promise');
-var playOverwatchUrl = "https://playoverwatch.com/ko-kr/career/pc/kr/";
+var playOverwatchUrl = "https://playoverwatch.com/en-us/career/pc/us/";
 
 var heroCnt = 24;
 var arrQuckPlayProperties = ["playTime", "victoriousGames", "accuracy", "perLife", "simultaneousTreatment", "missionContribution"];
@@ -24,8 +24,7 @@ var arrTotalStaticsKeys = ["0x02E00000FFFFFFFF", "0x02E0000000000002", "0x02E000
     "0x02E000000000012E", "0x02E000000000013B", "0x02E000000000013E"];
 
 exports.getUser = function(tagId) {
-    var url = playOverwatchUrl + tagId;
-    url = "https://playoverwatch.com/ko-kr/career/pc/kr/%EB%A5%98%ED%81%AC%EC%8A%A4%EC%B9%B4%EC%9D%B4%EC%9B%8C%EC%BB%A4-3143";
+    var url = playOverwatchUrl + encodeURIComponent(tagId);
     return rp({
         method: 'GET',
         uri: url,
@@ -35,6 +34,7 @@ exports.getUser = function(tagId) {
     .then(function (response) {
         var $ = cheerio.load(response);
         var divMaterHead = $("div.masthead-player");
+        var wins = $("p.masthead-detail span").text();
         var avatar = $(divMaterHead).find("img").attr("src");
         var userName = $(divMaterHead).find("h1").text();
 
@@ -47,7 +47,7 @@ exports.getUser = function(tagId) {
         var playerLevelImg = $(divMaterHead).find("div.player-rank").attr("style").replace("background-image:url(", "").replace(")", "");
         var playerLevel = $($(divPlayerLevel).find("div")[0]).text();
 
-        return {"userName" : userName, "avatar" : avatar,
+        return {"userName" : userName, "avatar" : avatar, "wins": wins,
             "competitiveRankImg": competitiveRankImg, "competitiveRank": competitiveRank,
             "playerLevel": playerLevel, "playerLevelImg": playerLevelImg, "playerLevelImgBorder": playerLevelImgBorder};
     })
@@ -57,8 +57,7 @@ exports.getUser = function(tagId) {
 };
 
 exports.getMainStatistics = function (type, tagId) {
-    var url = playOverwatchUrl + tagId;
-    url = "https://playoverwatch.com/ko-kr/career/pc/kr/%EB%A5%98%ED%81%AC%EC%8A%A4%EC%B9%B4%EC%9D%B4%EC%9B%8C%EC%BB%A4-3143";
+    var url = playOverwatchUrl + encodeURIComponent(tagId);
     return rp({
         method: 'GET',
         uri: url,
@@ -84,8 +83,7 @@ exports.getMainStatistics = function (type, tagId) {
 };
 
 exports.getHeroesStatistics = function (type, tagId) {
-    var url = playOverwatchUrl + tagId;
-    url = "https://playoverwatch.com/ko-kr/career/pc/kr/%EB%A5%98%ED%81%AC%EC%8A%A4%EC%B9%B4%EC%9D%B4%EC%9B%8C%EC%BB%A4-3143";
+    var url = playOverwatchUrl + encodeURIComponent(tagId);
     return rp({
         method: 'GET',
         uri: url,
@@ -118,8 +116,7 @@ exports.getHeroesStatistics = function (type, tagId) {
 };
 
 exports.getTotalStatistics = function (type, tagId) {
-    var url = playOverwatchUrl + tagId;
-    url = "https://playoverwatch.com/ko-kr/career/pc/kr/%EB%A5%98%ED%81%AC%EC%8A%A4%EC%B9%B4%EC%9D%B4%EC%9B%8C%EC%BB%A4-3143";
+    var url = playOverwatchUrl + encodeURIComponent(tagId);
     return rp({
         method: 'GET',
         uri: url,
