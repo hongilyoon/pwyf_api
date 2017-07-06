@@ -17,8 +17,8 @@ router.use(function timeLog(req, res, next) {
 router.get('/:id', function (req, res) {
 
     conn.getConnection(function (err, connection) {
-        connection.query(userSql.getUserListById, req.params.id, function (err, rows) {
-            connection.release();
+                connection.query(userSql.getUserListById, req.params.id, function (err, rows) {
+                    connection.release();
 
             // 에러 발생시
             if (err) {
@@ -147,6 +147,111 @@ router.get('/playoverwatch/total/:region/:type/:tagId', function (req, res) {
     var result = playoverwatch.getTotalStatistics(req.params.region, req.params.type, req.params.tagId).then(function (result) {
         res.contentType('application/json');
         res.send(JSON.stringify(result));
+    });
+});
+
+router.get('/playoverwatch/:tag', function (req, res) {
+
+    conn.getConnection(function (err, connection) {
+        connection.query(userSql.getUserListByTag, req.params.tag.replace('#', '-'), function (err, rows) {
+            connection.release();
+
+            // 에러 발생시
+            if (err) {
+                logger.getLogger().error(err);
+                throw err;
+            }
+
+            res.send(rows);
+        });
+    });
+});
+
+router.post("/playoverwatch/save", function (req, res) {
+
+    var platformSeq = req.body.platformSeq;
+    var regionSeq = req.body.regionSeq;
+    var tag = req.body.tag = req.body.tag.replace('#', '-');
+
+    conn.getConnection(function (err, connection) {
+        connection.query(userSql.getUserListByTag, [tag], function (err, rows) {
+            connection.release();
+
+            // 에러 발생시
+            if (err) {
+                throw err;
+            }
+
+            // 기존 사용자가 존재하는 경우 Update, 존재하지 않는 경우 Insert
+            if (rows.length > 0) {
+                conn.getConnection(function (err, connection) {
+                    connection.query(userSql.updateOverWatchUserInfo, [platformSeq, regionSeq, tag, tag], function (err, rows) {
+                        connection.release();
+
+                        // 에러 발생시
+                        if (err) {
+                            logger.getLogger().error(err);
+                            throw err;
+                        }
+
+                        res.sendStatus(200);
+                    });
+                });
+            } else {
+                conn.getConnection(function (err, connection) {
+                    connection.query(userSql.insertOverWatchUserInfo, [platformSeq, regionSeq, tag, 'N'], function (err, rows) {
+                        connection.release();
+
+                        // 에러 발생시
+                        if (err) {
+                            logger.getLogger().error(err);
+                            throw err;
+                        }
+
+                        res.sendStatus(200);
+                    });
+                });
+            }
+        });
+    });
+});
+
+router.post("/playoverwatch/friends", function (req, res) {
+
+    var tag = req.body.tag = req.body.tag.replace('#', '-');
+    var friendPlatformSeq = req.body.friendPlatformSeq;
+    var friendRegionSeq = req.body.friendRegionSeq;
+    var friendTag = req.body.tag = req.body.friendTag.replace('#', '-');
+
+    conn.getConnection(function (err, connection) {
+        connection.query(userSql.getUserListByTag, [friendTag], function (err, rows) {
+            connection.release();
+
+            // 에러 발생시
+            if (err) {
+                throw err;
+            }
+
+            // 기존 사용자가 존재하는 경우는 Skip, 존재하지 않는 경우 Insert
+            if (rows.length < 1) {
+                conn.getConnection(function (err, connection) {
+                    connection.query(userSql.insertOverWatchUserInfo, [friendPlatformSeq, friendRegionSeq, friendTag, 'N'], function (err, rows) {
+                        connection.release();
+
+                        // 에러 발생시
+                        if (err) {
+                            logger.getLogger().error(err);
+                            throw err;
+                        }
+
+                        res.sendStatus(200);
+                    });
+                });
+            }
+            else {
+
+            }
+        });
     });
 });
 
