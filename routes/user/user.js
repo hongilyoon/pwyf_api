@@ -122,29 +122,36 @@ router.get('/last-update-date/:id', function (req, res) {
     });
 });
 
-router.get('/playoverwatch/:region/:tagId', function (req, res) {
-    var result = playoverwatch.getUser(req.params.region, req.params.tagId).then(function (result) {
+router.get('/playoverwatch/:lang/:region/:tagId', function (req, res) {
+    var result = playoverwatch.getUser(req.params.lang, req.params.region, req.params.tagId).then(function (result) {
         res.contentType('application/json');
         res.send(JSON.stringify(result));
     });
 });
 
-router.get('/playoverwatch/main/:region/:type/:tagId', function (req, res) {
-    var result = playoverwatch.getMainStatistics(req.params.region, req.params.type, req.params.tagId).then(function (result) {
+router.get('/playoverwatch/main/:lang/:region/:type/:tagId', function (req, res) {
+    var result = playoverwatch.getMainStatistics(req.params.lang, req.params.region, req.params.type, req.params.tagId).then(function (result) {
         res.contentType('application/json');
         res.send(JSON.stringify(result));
     });
 });
 
-router.get('/playoverwatch/heroes/:region/:type/:tagId', function (req, res) {
-    var result = playoverwatch.getHeroesStatistics(req.params.region, req.params.type, req.params.tagId).then(function (result) {
+router.get('/playoverwatch/heroes/:lang/:region/:type/:tagId', function (req, res) {
+    var result = playoverwatch.getHeroesStatistics(req.params.lang, req.params.region, req.params.type, req.params.tagId).then(function (result) {
         res.contentType('application/json');
         res.send(JSON.stringify(result));
     });
 });
 
-router.get('/playoverwatch/total/:region/:type/:tagId', function (req, res) {
-    var result = playoverwatch.getTotalStatistics(req.params.region, req.params.type, req.params.tagId).then(function (result) {
+router.get('/playoverwatch/total/:lang/:region/:type/:tagId', function (req, res) {
+    var result = playoverwatch.getTotalStatistics(req.params.lang, req.params.region, req.params.type, req.params.tagId).then(function (result) {
+        res.contentType('application/json');
+        res.send(JSON.stringify(result));
+    });
+});
+
+router.get('/playoverwatch/achievements/:lang/:region/:tagId', function (req, res) {
+    var result = playoverwatch.getAchievementsStatistics(req.params.lang, req.params.region, req.params.tagId).then(function (result) {
         res.contentType('application/json');
         res.send(JSON.stringify(result));
     });
@@ -211,45 +218,6 @@ router.post("/playoverwatch/save", function (req, res) {
                         res.sendStatus(200);
                     });
                 });
-            }
-        });
-    });
-});
-
-router.post("/playoverwatch/friends", function (req, res) {
-
-    var tag = req.body.tag = req.body.tag.replace('#', '-');
-    var friendPlatformSeq = req.body.friendPlatformSeq;
-    var friendRegionSeq = req.body.friendRegionSeq;
-    var friendTag = req.body.tag = req.body.friendTag.replace('#', '-');
-
-    conn.getConnection(function (err, connection) {
-        connection.query(userSql.getUserListByTag, [friendTag], function (err, rows) {
-            connection.release();
-
-            // 에러 발생시
-            if (err) {
-                throw err;
-            }
-
-            // 기존 사용자가 존재하는 경우는 Skip, 존재하지 않는 경우 Insert
-            if (rows.length < 1) {
-                conn.getConnection(function (err, connection) {
-                    connection.query(userSql.insertOverWatchUserInfo, [friendPlatformSeq, friendRegionSeq, friendTag, 'N'], function (err, rows) {
-                        connection.release();
-
-                        // 에러 발생시
-                        if (err) {
-                            logger.getLogger().error(err);
-                            throw err;
-                        }
-
-                        res.sendStatus(200);
-                    });
-                });
-            }
-            else {
-
             }
         });
     });
