@@ -190,7 +190,8 @@ exports.getAchievementsStatistics = function (lang, region, tagId) {
                     arrAchievement.push({
                         "img": $(divAchievementCard).find("img").attr("src"),
                         "title": $(divAchievementCard).find("div.media-card-title").text(),
-                        "isCompleted": !$(divAchievementCard).hasClass("m-disabled")})
+                        "isCompleted": !$(divAchievementCard).hasClass("m-disabled"),
+                        "desc": $(divAchievementCard).next().find("p").text()})
                 });
 
                 result[arrAchievementsValue[i]] = arrAchievement;
