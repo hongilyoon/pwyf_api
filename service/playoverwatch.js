@@ -49,8 +49,14 @@ exports.getUser = function(lang, region, tagId) {
         var competitiveRank = $(divCompetitiveRank).find("div").text();
 
         var divPlayerLevel = $(divMaterHead).find("div.player-level");
-        var playerLevelImgBorder = $(divPlayerLevel).attr("style").replace("background-image:url(", "").replace(")", "");
-        var playerLevelImg = $(divMaterHead).find("div.player-rank").attr("style").replace("background-image:url(", "").replace(")", "");
+        var playerLevelImgBorder = null;
+        if ( $(divPlayerLevel).attr("style") != undefined) {
+            playerLevelImgBorder = $(divPlayerLevel).attr("style").replace("background-image:url(", "").replace(")", "");
+        }
+        var playerLevelImg = null;
+        if ($(divMaterHead).find("div.player-rank").attr("style") != undefined) {
+            playerLevelImg  = $(divMaterHead).find("div.player-rank").attr("style").replace("background-image:url(", "").replace(")", "");
+        }
         var playerLevel = $($(divPlayerLevel).find("div")[0]).text();
 
         return {"userName" : userName, "avatar" : avatar, "wins": wins,
