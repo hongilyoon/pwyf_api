@@ -9,8 +9,6 @@ var cheerio = require("cheerio");
 var promise = require('promise');
 var playOverwatchUrl = "https://playoverwatch.com/{lang}/career/pc/{region}/";
 
-//en-us, ko-kr
-
 var heroCnt = 24;
 var arrQuickPlayProperties = ["playTime", "victoriousGames", "accuracy", "perLife", "simultaneousTreatment", "missionContribution"];
 var arrCompetitionProperties = ["playTime", "victoriousGames", "odds", "accuracy", "perLife", "simultaneousTreatment", "missionContribution"];
@@ -29,8 +27,10 @@ var arrAchievementsValue = ["General", "Offense", "Defense", "Tank", "Support", 
 var arrAchievementsKey = ["overwatch.achievementCategory.0", "overwatch.achievementCategory.1", "overwatch.achievementCategory.2",
     "overwatch.achievementCategory.3", "overwatch.achievementCategory.4", "overwatch.achievementCategory.5", "overwatch.achievementCategory.6"];
 
+var arrLang = ["de-de", "en-us", "en-gb", "es-es", "es-mx", "fr-fr", "it-it", "pt-br", "pt-pt", "pl-pl", "ru-ru", "ko-kr", "ja-jp", "zh-tw"];
+
 exports.getUser = function(lang, region, tagId) {
-    var url = playOverwatchUrl.replace("{lang}", lang).replace("{region}", region) + encodeURIComponent(tagId);
+    var url = playOverwatchUrl.replace("{lang}", getLanguage(lang)).replace("{region}", region) + encodeURIComponent(tagId);
     return rp({
         method: 'GET',
         uri: url,
@@ -69,7 +69,7 @@ exports.getUser = function(lang, region, tagId) {
 };
 
 exports.getMainStatistics = function (lang, region, type, tagId) {
-    var url = playOverwatchUrl.replace("{lang}", lang).replace("{region}", region) + encodeURIComponent(tagId);
+    var url = playOverwatchUrl.replace("{lang}", getLanguage(lang)).replace("{region}", region) + encodeURIComponent(tagId);
     return rp({
         method: 'GET',
         uri: url,
@@ -95,7 +95,7 @@ exports.getMainStatistics = function (lang, region, type, tagId) {
 };
 
 exports.getHeroesStatistics = function (lang, region, type, tagId) {
-    var url = playOverwatchUrl.replace("{lang}", lang).replace("{region}", region) + encodeURIComponent(tagId);
+    var url = playOverwatchUrl.replace("{lang}", getLanguage(lang)).replace("{region}", region) + encodeURIComponent(tagId);
     return rp({
         method: 'GET',
         uri: url,
@@ -132,7 +132,7 @@ exports.getHeroesStatistics = function (lang, region, type, tagId) {
 };
 
 exports.getTotalStatistics = function (lang, region, type, tagId) {
-    var url = playOverwatchUrl.replace("{lang}", lang).replace("{region}", region) + encodeURIComponent(tagId);
+    var url = playOverwatchUrl.replace("{lang}", getLanguage(lang)).replace("{region}", region) + encodeURIComponent(tagId);
     return rp({
         method: 'GET',
         uri: url,
@@ -177,7 +177,7 @@ exports.getTotalStatistics = function (lang, region, type, tagId) {
 };
 
 exports.getAchievementsStatistics = function (lang, region, tagId) {
-    var url = playOverwatchUrl.replace("{lang}", lang).replace("{region}", region) + encodeURIComponent(tagId);
+    var url = playOverwatchUrl.replace("{lang}", getLanguage(lang)).replace("{region}", region) + encodeURIComponent(tagId);
     return rp({
         method: 'GET',
         uri: url,
@@ -211,3 +211,16 @@ exports.getAchievementsStatistics = function (lang, region, tagId) {
 };
 
 
+var getLanguage = function(lang) {
+    var result = arrLang[1];
+    if (lang != null && lang != undefined) {
+        var lowerLang = lang.toLowerCase();
+        arrLang.forEach(function (value) {
+            if (value == lowerLang) {
+                result = value;
+            }
+        })
+    }
+
+    return result;
+}
