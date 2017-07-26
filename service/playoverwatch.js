@@ -212,15 +212,26 @@ exports.getAchievementsStatistics = function (lang, region, tagId) {
 
 
 var getLanguage = function(lang) {
-    var result = arrLang[1];
+    var result = null;
     if (lang != null && lang != undefined) {
         var lowerLang = lang.toLowerCase();
         arrLang.forEach(function (value) {
             if (value == lowerLang) {
                 result = value;
+                return;
             }
         })
+
+        if (result == null) {
+            var lang = lowerLang.split("-")[0];
+            arrLang.forEach(function (value) {
+                if (value.split("-")[0] == lang) {
+                    result = value;
+                    return;
+                }
+            })
+        }
     }
 
-    return result;
+    return result != null ? result : arrLang[1];
 }
