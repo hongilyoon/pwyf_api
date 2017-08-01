@@ -9,19 +9,19 @@ var cheerio = require("cheerio");
 var promise = require('promise');
 var playOverwatchUrl = "https://playoverwatch.com/{lang}/career/pc/{region}/";
 
-var heroCnt = 24;
+var heroCnt = 25;
 var arrQuickPlayProperties = ["playTime", "victoriousGames", "accuracy", "perLife", "simultaneousTreatment", "missionContribution"];
 var arrCompetitionProperties = ["playTime", "victoriousGames", "odds", "accuracy", "perLife", "simultaneousTreatment", "missionContribution"];
 var arrTotalStatisticsValue = ["ALL HEROES", "Reaper", "Tracer", "Mercy",
     "Hanzo", "Torbjörn", "Reinhardt", "Pharah", "Winston", "Widowmaker",
     "Bastion", "Symmetra", "Zenyatta", "Genji", "Roadhog", "McCree",
     "Junkrat", "Zarya", "Soldier: 76", "Lúcio", "D.Va", "Mei",
-    "Sombra", "Ana", "Orisa"];
+    "Sombra", "Ana", "Orisa", "Doomfist"];
 var arrTotalStatisticsKey = ["0x02E00000FFFFFFFF", "0x02E0000000000002", "0x02E0000000000003", "0x02E0000000000004",
     "0x02E0000000000005", "0x02E0000000000006", "0x02E0000000000007", "0x02E0000000000008", "0x02E0000000000009", "0x02E000000000000A",
     "0x02E0000000000015", "0x02E0000000000016", "0x02E0000000000020", "0x02E0000000000029", "0x02E0000000000040", "0x02E0000000000042",
     "0x02E0000000000065", "0x02E0000000000068", "0x02E000000000006E", "0x02E0000000000079", "0x02E000000000007A", "0x02E00000000000DD",
-    "0x02E000000000012E", "0x02E000000000013B", "0x02E000000000013E"];
+    "0x02E000000000012E", "0x02E000000000013B", "0x02E000000000013E", "0x02E000000000012F"];
 
 var arrAchievementsValue = ["General", "Offense", "Defense", "Tank", "Support", "Maps", "Special"];
 var arrAchievementsKey = ["overwatch.achievementCategory.0", "overwatch.achievementCategory.1", "overwatch.achievementCategory.2",
@@ -106,13 +106,21 @@ exports.getHeroesStatistics = function (lang, region, type, tagId) {
         var $ = cheerio.load(response);
         var result = {};
         var postElements = $("div#{type} div.bar-text".replace(/{type}/g, type));
+        var property = {};
+        var cnt = 0;
         postElements.each(function (i) {
             var obj = {
                 "title": $(this).find("div.title").text(),
                 "value": $(this).find("div.description").text(),
                 "percent": $(this).parent("div").parent("div").attr("data-overwatch-progress-percent"),
                 "img": $(this).parent("div").parent("div").find("img").attr("src")};
-            var propertyName = type == "quickplay" ? arrQuickPlayProperties[parseInt(i / heroCnt)] : arrCompetitionProperties[parseInt(i / heroCnt)];
+            property[obj.title] = property[obj.title] == null ? 0 : property[obj.title] + 1;
+            if (cnt < property[obj.title]) {
+                cnt = property[obj.title];
+            }
+
+            // var propertyName = type == "quickplay" ? arrQuickPlayProperties[parseInt(i / heroCnt)] : arrCompetitionProperties[parseInt(i / heroCnt)];
+            var propertyName = type == "quickplay" ? arrQuickPlayProperties[cnt] : arrCompetitionProperties[cnt];
             var arrObj = result[propertyName];
             if (arrObj == null || arrObj == undefined || arrObj.length < 1) {
                 arrObj = new Array();
